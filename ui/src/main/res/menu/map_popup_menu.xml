@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/all_buildings"
+        android:title="@string/all_buildings"/>
+
+    <item
+        android:id="@+id/historical"
+        android:title="@string/menu_historical" />
+
+    <item
+        android:id="@+id/administrative"
+        android:title="@string/menu_administrative" />
+
+    <item
+        android:id="@+id/educational"
+        android:title="@string/menu_educational" />
+
+    <item
+        android:id="@+id/dormitory"
+        android:title="@string/menu_dormitory" />
+
+    <item
+        android:id="@+id/multifunctional"
+        android:title="@string/menu_multifunctional" />
+
+    <!--<item
+        android:id="@+id/scientist"
+        android:title="Ученый"/>-->
+</menu>
