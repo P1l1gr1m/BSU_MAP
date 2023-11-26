@@ -60,14 +60,20 @@ class DataRepositoryImpl(private val buildingItemsDatabase: BuildingItemsDatabas
         try {
             val items = service.getAllBuildings()
                 ?.filter { isItemWithID(it) } // Clean list from items with null id
-                ?.map {
-                    BuildingItemJsonMapper().fromJsonToRoomDB(it)!!
-                }
+                ?.mapNotNull {
+                    BuildingItemJsonMapper().fromJsonToRoomDB(it)
+                } // Use mapNotNull to filter out null values
                 ?.filter { isItemNotEmpty(it) } // Clean DB from items with empty data
+
+            // Log the items to see what's being processed
+            items?.forEach { item ->
+                Log.d("BuildingItemLoader", "Item: $item")
+            }
+
             buildingItemsDatabase.buildingItemsDao().insertBuildingItemsList(items!!)
         } catch (e: Throwable) {
-            throw NullPointerException("Error: " +
-                    "Some BuildingItem (or even whole list) from json is empty!\n" + e.message)
+            Log.e("BuildingItemLoader", "Error loading data", e)
+            throw e
         }
     }
 

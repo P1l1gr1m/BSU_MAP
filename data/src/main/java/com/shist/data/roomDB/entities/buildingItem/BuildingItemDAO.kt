@@ -1,6 +1,5 @@
 package com.shist.data.roomDB.entities.buildingItem
 
-import android.util.Log
 import androidx.room.*
 import com.shist.data.roomDB.entities.buildingItem.adressItem.AddressItemEntityDB
 import com.shist.data.roomDB.entities.buildingItem.buildingItemImage.BuildingItemImageEntityDB
@@ -57,15 +56,14 @@ interface BuildingItemDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertIconItemEntityDB(icon: IconItemEntityDB?): Long
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertIconItemEntitiesListDB(items: List<IconItemEntityDB>?): List<Long> {
+    suspend fun insertIconItemEntitiesListDB(items: List<IconItemEntityDB?>): List<Long> {
         val resultValue = emptyList<Long>().toMutableList()
-        if (items != null) {
-            for (ii: IconItemEntityDB in items) {
-                resultValue += insertIconItemEntityDB(ii)
-            }
+        items.filterNotNull().forEach { ii ->
+            resultValue += insertIconItemEntityDB(ii)
         }
-        return resultValue.toList()
+        return resultValue
     }
+
     @Update
     suspend fun updateIconItemEntityDB(icon: IconItemEntityDB?)
     @Update
@@ -139,9 +137,9 @@ interface BuildingItemDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOneBuildingItem(item: BuildingItemDB): Long {
         val resultValue = insertBuildingItemEntityDB(item.buildingItemEntityDB)
-        insertStructuralObjectItemEntitiesListDB(item.structuralObjectEntities)
-        insertBuildingItemImageEntitiesListDB(item.buildingItemImageEntities)
-        insertIconItemEntitiesListDB(item.iconEntities)
+        insertStructuralObjectItemEntitiesListDB(item.structuralObjectEntities as List<StructuralObjectItemEntityDB>?)
+        insertBuildingItemImageEntitiesListDB(item.buildingItemImageEntities as List<BuildingItemImageEntityDB>?)
+        insertIconItemEntitiesListDB(item.iconEntities!!)
         insertAddressItemEntityDB(item.address)
         if (item.scientist != null) {
             insertScientistItemEntityDB(item.scientist)
@@ -163,9 +161,9 @@ interface BuildingItemDAO {
     @Update
     suspend fun updateOneBuildingItem(item: BuildingItemDB) {
         updateBuildingItemEntityDB(item.buildingItemEntityDB)
-        updateStructuralObjectItemEntitiesListDB(item.structuralObjectEntities)
-        updateBuildingItemImageEntitiesListDB(item.buildingItemImageEntities)
-        updateIconItemEntitiesListDB(item.iconEntities)
+        updateStructuralObjectItemEntitiesListDB(item.structuralObjectEntities as List<StructuralObjectItemEntityDB>?)
+        updateBuildingItemImageEntitiesListDB(item.buildingItemImageEntities as List<BuildingItemImageEntityDB>?)
+        updateIconItemEntitiesListDB(item.iconEntities as List<IconItemEntityDB>?)
         updateAddressItemEntityDB(item.address)
         if (item.scientist != null) {
             updateScientistItemEntityDB(item.scientist)
@@ -184,9 +182,9 @@ interface BuildingItemDAO {
     @Delete
     suspend fun deleteOneBuildingItem(item: BuildingItemDB, deleteChildLocations: Boolean) {
         if (deleteChildLocations) {
-            deleteStructuralObjectItemEntitiesListDB(item.structuralObjectEntities)
-            deleteBuildingItemImageEntitiesListDB(item.buildingItemImageEntities)
-            deleteIconItemEntitiesListDB(item.iconEntities)
+            deleteStructuralObjectItemEntitiesListDB(item.structuralObjectEntities as List<StructuralObjectItemEntityDB>?)
+            deleteBuildingItemImageEntitiesListDB(item.buildingItemImageEntities as List<BuildingItemImageEntityDB>?)
+            deleteIconItemEntitiesListDB(item.iconEntities as List<IconItemEntityDB>?)
             deleteAddressItemEntityDB(item.address)
             if (item.scientist != null) {
                 deleteScientistItemEntityDB(item.scientist)

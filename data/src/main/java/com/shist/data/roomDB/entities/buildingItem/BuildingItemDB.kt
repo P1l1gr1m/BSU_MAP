@@ -25,19 +25,19 @@ data class BuildingItemDB (
         parentColumn = "id",
         entityColumn = "buildingItemId"
     )
-    val structuralObjectEntities: List<StructuralObjectItemEntityDB>?,
+    val structuralObjectEntities: List<StructuralObjectItemEntityDB?>?,
 
     @Relation(
         parentColumn = "id",
         entityColumn = "buildingItemId"
     )
-    val buildingItemImageEntities: List<BuildingItemImageEntityDB>?,
+    val buildingItemImageEntities: List<BuildingItemImageEntityDB?>?,
 
     @Relation(
         parentColumn = "id",
         entityColumn = "buildingItemId"
     )
-    val iconEntities: List<IconItemEntityDB>?,
+    val iconEntities: List<IconItemEntityDB?>?,
 
     @Relation(
         parentColumn = "id",

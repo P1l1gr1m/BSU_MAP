@@ -13,63 +13,10 @@ import com.shist.data.roomDB.entities.buildingItem.structuralObjectItem.Structur
 
 // This mapper converts a JSON entity to a database entity
 class BuildingItemJsonMapper {
-
-    /*fun fromJsonToRoomDB(itemJson: BuildingItemJson?, itemImagesJson: List<BuildingItemImageJson?>?) : BuildingItemDB?
-    {
-        if (itemJson == null) {
-            return null
-        }
-        else {
-            val type: String?
-            val markerPath: String?
-
-            if (itemJson.type == null) {
-                type = null
-                markerPath = null
-            } else {
-                type = itemJson.type!!.type
-                markerPath = itemJson.type!!.markerPath
-            }
-
-            val structuralObjectsJson = itemJson.structuralObjects
-
-            val structuralObjectsDB =
-                structuralObjectsJson?.map {
-                    StructuralObjectItemJsonMapper().fromJsonToRoomDB(it)!!.structuralItemsEntityDB
-                }
-
-            val buildingItemImagesDB =
-                itemImagesJson?.map {
-                    BuildingItemImageJsonMapper().fromJsonToRoomDB(it)!!
-                }
-
-            val iconsDB =
-                structuralObjectsJson?.map {
-                    StructuralObjectItemJsonMapper().fromJsonToRoomDB(it)!!.icon
-                }
-
-            return BuildingItemDB(
-                BuildingItemEntityDB(
-                    itemJson.id!!,
-                    itemJson.inventoryUsrreNumber,
-                    itemJson.name,
-                    itemJson.isModern.toBoolean(),
-                    type,
-                    markerPath
-                ),
-                structuralObjectsDB!!,
-                buildingItemImagesDB!!,
-                iconsDB!!,
-                AddressItemJsonMapper().fromJsonToRoomDB(itemJson.address, itemJson.id)!!
-            )
-        }
-    }*/
-
     fun fromJsonToRoomDB(itemJson: BuildingItemJson?): BuildingItemDB? {
         if (itemJson == null) {
             return null
-        }
-        else {
+        } else {
             val type: String?
             val markerPath: String?
 
@@ -83,48 +30,44 @@ class BuildingItemJsonMapper {
 
             val structuralObjectsJson = itemJson.structuralObjects
 
-            val structuralObjectsDB =
-                structuralObjectsJson?.map {
-                    StructuralObjectItemJsonMapper().fromJsonToRoomDB(it, itemJson.id)!!.structuralItemsEntityDB
-                }
+            val structuralObjectsDB = structuralObjectsJson?.map {
+                StructuralObjectItemJsonMapper().fromJsonToRoomDB(it, itemJson.id)
+                    ?.structuralItemsEntityDB
+            } ?: emptyList()
 
-            /*val buildingItemImagesDB =
-                itemImagesJson?.map {
-                    BuildingItemImageJsonMapper().fromJsonToRoomDB(it)!!
-                }*/
+            val buildingItemImagesDB = itemJson.photos?.map {
+                BuildingItemImageJsonMapper().fromJsonToRoomDB(it, itemJson.id)
+            } ?: emptyList()
 
-            val buildingItemImagesDB =
-                itemJson.photos?.map {
-                    BuildingItemImageJsonMapper().fromJsonToRoomDB(it, itemJson.id)!!
-                }
+            val iconsDB = structuralObjectsJson?.map {
+                StructuralObjectItemJsonMapper().fromJsonToRoomDB(it, itemJson.id)?.icon
+            } ?: emptyList()
 
-            val iconsDB =
-                structuralObjectsJson?.map {
-                    StructuralObjectItemJsonMapper().fromJsonToRoomDB(it, itemJson.id)!!.icon
-                }
 
-            val scientistDB = ScientistItemJsonMapper().fromJsonToRoomDB(itemJson.scientist, itemJson.id)
+            val scientistDB = if (itemJson.scientist != null) {
+                ScientistItemJsonMapper().fromJsonToRoomDB(itemJson.scientist, itemJson.id)
+            } else {
+                null
+            }
+
+            val addressDB =
+                AddressItemJsonMapper().fromJsonToRoomDB(itemJson.address, itemJson.id)
+
             return BuildingItemDB(
                 BuildingItemEntityDB(
-                    itemJson.id!!,
-                    /*itemJson.inventoryUsrreNumber*/null,
-                    itemJson.name,
-                    /*itemJson.isModern.toBoolean()*/null,
+                    itemJson.id ?: "",
+                    itemJson.inventoryUsrreNumber ?: "",
+                    itemJson.name ?: "",
+                    itemJson.isModern,
                     type,
                     markerPath,
                     itemJson.order,
                     scientistDB?.id
                 ),
-                structuralObjectsDB!!,
-                buildingItemImagesDB/* ?: listOf(BuildingItemImageEntityDB(itemJson.id!!, null, null, null))*/,
-                iconsDB!!,
-                AddressItemJsonMapper().fromJsonToRoomDB(
-                    BuildingItemAddressJson(
-                        itemJson.id,
-                        itemJson.address,
-                        BuildingItemAddressCoordinatesJson(itemJson.latitude, itemJson.longitude)
-                    ), itemJson.id
-                )!!,
+                structuralObjectsDB,
+                buildingItemImagesDB,
+                iconsDB,
+                addressDB,
                 scientistDB
             )
         }
